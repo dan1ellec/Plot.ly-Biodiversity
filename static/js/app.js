@@ -47,6 +47,11 @@ function init() {
             dropdownMenu.append("option").text(x).property("value", x);
           });       
     });
+
+    var initialIndex = 0;
+    demographic(initialIndex);
+    startingPlots(initialIndex);
+
 }
 
 init();
@@ -61,7 +66,7 @@ init();
 // creating a function for the dempgrapic panel
 // having a variable 'id', because this will reference the specific id selected
 
-function demographic(id) {
+function demographic(index) {
     d3.json("../samples.json").then((data) => {
         console.log(data);
         
@@ -69,12 +74,12 @@ function demographic(id) {
         console.log(metadata);
 
         // test: selecting the first dicitonary
-        var idMetadata = metadata[0];
+        //var idMetadata = metadata[0];
 
         //var id = 5;
         // Obtaining the dictionary for a selected id
         // var idMetadata = metadata["${id}"];
-        // var idMetadata = metadata[id];
+        var idMetadata = metadata[index];
         // not sure which way will need
 
         console.log(idMetadata);        
@@ -94,17 +99,19 @@ function demographic(id) {
 })
 };
 
-demographic();
+//demographic();
 
 // creating function for the plots.
 // will be using variable id again
 
-function startingPlots(id){
+function startingPlots(index){
     d3.json("../samples.json").then((data) => {
 
         // need to access the sample data section
         var sampleData = data.samples;
         console.log(sampleData);
+        console.log("length")
+        console.log(sampleData.length)
 
         // this is how we reach the actual id in the dictionary
         // so the dictionary needs to be accessed through the idndex, then find id with .id
@@ -117,8 +124,8 @@ function startingPlots(id){
         // so just first ten!
 
         // obtaining section using index
-        var section = sampleData[0];
-        // var section = sampleData[id];
+        //var section = sampleData[0];
+        var section = sampleData[index];
 
         // obtaining the top ten values for the bar chart.
         var values = section.sample_values.slice(0, 10);
@@ -168,68 +175,137 @@ function startingPlots(id){
 
 
 
+        //Creating a bubble chart that displays each sample.
+        // Use otu_ids for the x values.
+        // Use sample_values for the y values.
+        // Use sample_values for the marker size.
+        // Use otu_ids for the marker colors.
+        // Use otu_labels for the text values.
+
+        // think when using OTU ids actually need OUT ids before the OTU was added above, need them actuallly as numbers
+        // so going to use reverse_ids instead
+        // buble needs the full values not the shortened ten
+
+        var sample_values_bubble = section.sample_values
+        var otu_ids_bubble = section.otu_ids
+        var out_labels_bubble = section.otu_labels
 
 
+        var trace2 = [{
+            x: otu_ids_bubble,
+            y: sample_values_bubble,
+            type: 'scatter',
+            mode: 'markers',
+            marker: {
+                size: sample_values_bubble,
+                color: otu_ids_bubble
+            },
+            text: out_labels_bubble
 
+        }];
+
+        var layout2 = {
+            title: 'Bubble Chart All Samples',
+                showlegend: false,
+                //height: 600,
+                //width: 1000,
+                xaxis:{title: "OTU ID"}            
+        };
+
+        // plotting the bubble chart
+        Plotly.newPlot('bubble', trace2, layout2);
 
     })  
 
 };
 
-startingPlots();
+//startingPlots();
 
 
 //maybe for changing: for index between whatever and whatever. if sampleData[idex].id = selected id then use that data
 
+//UPDATING
 
-// // Using D3 library to read the samples.json file
-// // The data from the JSON file is arbitrarily named importedData as the argument
-// d3.json("../samples.json").then((data) => {
-//     console.log(data);
+// Call updatePlotly() when a change takes place to the DOM
+d3.selectAll("body").on("change", optionChanged(idSelection));
 
-//     var metadata = data.metadata;
+//input.onchange = updatePlotly();
 
-//     console.log(metadata);
-    
-  
-//     // // Sort the data array using the greekSearchResults value
-//     // data.sort(function(a, b) {
-//     //   return parseFloat(b.greekSearchResults) - parseFloat(a.greekSearchResults);
-//     // });
-  
-//     // // Slice the first 10 objects for plotting
-//     // data = data.slice(0, 10);
-  
-//     // // Reverse the array due to Plotly's defaults
-//     // data = data.reverse();
-  
-//     // // Trace1 for the Greek Data
-//     // var trace1 = {
-//     //   x: data.map(row => row.greekSearchResults),
-//     //   y: data.map(row => row.greekName),
-//     //   text: data.map(row => row.greekName),
-//     //   name: "Greek",
-//     //   type: "bar",
-//     //   orientation: "h"
-//     // };
-  
-//     // // data
-//     // var chartData = [trace1];
-  
-//     // // Apply the group bar mode to the layout
-//     // var layout = {
-//     //   title: "Greek gods search results",
-//     //   margin: {
-//     //     l: 100,
-//     //     r: 100,
-//     //     t: 100,
-//     //     b: 100
-//     //   }
-//     // };
-  
-//     // // Render the plot to the div tag with id "plot"
-//     // Plotly.newPlot("plot", chartData, layout);
-//   });
+// This function is called when a dropdown menu item is selected
+function optionChanged(idSelection) {
+    // Use D3 to select the dropdown menu
+    var dropdownMenu = d3.select("#selDataset");
+    // Assign the value of the dropdown menu option to a variable
+    var idSelection = dropdownMenu.node().value;
+
+    // Selecting the bar chart
+    var barChart = d3.selectAll("#bar").node();
+
+    // Selecting the bubble chart
+    var bubbleChart = d3.selectAll("#bubble").node();
+
+    // Selecting the demographic panel
+    var demographicPanel = d3.selectAll("#sample-metadata").node();
+
+    console.log("demo panel");
+    console.log(demographicPanel);
+
+    // now need to link the value idSlection to a index
+
+    //maybe for changing: for index between whatever and whatever. if sampleData[idex].id = selected id then use that data
+
+    // this is how we reach the actual id in the dictionary
+        // so the dictionary needs to be accessed through the idndex, then find id with .id
+        // this gets id for index 0
+
+    d3.json("../samples.json").then((data) => {
+
+        // need to access the sample data section
+        var sampleData = data.samples;
+
+        for (var i = 0; i < sampleData.length; i++) {
+            if(sampleData[i].id == idSelection){
+
+                index = i;
+
+                // removing the current values in the demographic panel
+                var currentInfo = d3.select("#sample-metadata").selectAll("h5");
+                console.log("currentInfo")
+                console.log(currentInfo)
+
+                currentInfo.remove();
+
+                // d3.select("#sample-metadata")
+                //     .selectAll("h5")
+                //     .exit()
+                //     .remove();
+
+                // Object.entries(demographicPanel).forEach(([key, value]) => {
+                //     demographicPanel.selectAll("h5").exit().remove(); //text(`${key}: ${value}`);
+                // })
+
+                startingPlots(index);
+                demographic(index);
+            }
+    }
+
+    // this seems to update plots well but the metadata panel adds to what is there
+    // so need to somehome remove what is there first
+
+
+        // for (var i = 0; i < sampleData.length; i++) {
+        //     if(sampleData[i].id == $(this).attr("value")){
+
+        //         index = i;
+        //         startingPlots(index);
+        //         demographic(index);
+        //     }
+        // }
+
+
+    });
+
+};
 
 
 
@@ -280,3 +356,51 @@ startingPlots();
 //   Plotly.restyle(CHART, "y", [y]);
 // }
 
+// // Using D3 library to read the samples.json file
+// // The data from the JSON file is arbitrarily named importedData as the argument
+// d3.json("../samples.json").then((data) => {
+//     console.log(data);
+
+//     var metadata = data.metadata;
+
+//     console.log(metadata);
+    
+  
+//     // // Sort the data array using the greekSearchResults value
+//     // data.sort(function(a, b) {
+//     //   return parseFloat(b.greekSearchResults) - parseFloat(a.greekSearchResults);
+//     // });
+  
+//     // // Slice the first 10 objects for plotting
+//     // data = data.slice(0, 10);
+  
+//     // // Reverse the array due to Plotly's defaults
+//     // data = data.reverse();
+  
+//     // // Trace1 for the Greek Data
+//     // var trace1 = {
+//     //   x: data.map(row => row.greekSearchResults),
+//     //   y: data.map(row => row.greekName),
+//     //   text: data.map(row => row.greekName),
+//     //   name: "Greek",
+//     //   type: "bar",
+//     //   orientation: "h"
+//     // };
+  
+//     // // data
+//     // var chartData = [trace1];
+  
+//     // // Apply the group bar mode to the layout
+//     // var layout = {
+//     //   title: "Greek gods search results",
+//     //   margin: {
+//     //     l: 100,
+//     //     r: 100,
+//     //     t: 100,
+//     //     b: 100
+//     //   }
+//     // };
+  
+//     // // Render the plot to the div tag with id "plot"
+//     // Plotly.newPlot("plot", chartData, layout);
+//   });
