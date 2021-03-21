@@ -120,30 +120,29 @@ function startingPlots(id){
         var section = sampleData[0];
         // var section = sampleData[id];
 
-        // obtaining the values for the bar chart.
+        // obtaining the top ten values for the bar chart.
         var values = section.sample_values.slice(0, 10);
-        // reversing
+        // reversing the top ten values to accomodate the plotly graph set up
         var sample_values = values.reverse();
         console.log(sample_values);
 
-        // obtaining the labels for the bar chart.
+        // obtaining the top 10 labels for the bar chart.
         var ids = section.otu_ids.slice(0, 10) ;
+        // reversing the top ten labels to accomodate the plotly graph set up
         var reverse_ids = ids.reverse();
-        var string_ids = toString(reverse_ids)
-        string_ids.forEach((x) => {
-            
-            var otu_ids = 'OTU' + x;
-
-        })
-
+        // using map to add 'OTU' before each label
+        let otu_ids = reverse_ids.map((a) => {
+            return `OTU ${a}`;
+          })
         console.log(otu_ids);
 
-        // Obtaining the hovertext for the bar chart.
+        // Obtaining the top ten hovertext values for the bar chart.
         var labels = section.otu_labels.slice(0, 10) ;
+        // reversing the top ten hovertext values to accomodate the plotly graph set up
         var otu_labels = labels.reverse();
         console.log(otu_labels );
 
-        // will reverse to look like theirs
+        // creating the trace for the bar chart
         var trace1 = [{
             type: 'bar',
             x: sample_values,
@@ -153,8 +152,9 @@ function startingPlots(id){
             hoverinfo: otu_labels
           }];
 
+        // creating the layout for the bar chart
         var layout = {
-            title: "Greek gods search results",
+            title: "Top 10 OTUs",
             margin: {
                 l: 100,
                 r: 100,
@@ -162,7 +162,8 @@ function startingPlots(id){
                 b: 100
             }
             };
-          
+        
+        // plotting the bar chart
         Plotly.newPlot('bar', trace1, layout);
 
 
