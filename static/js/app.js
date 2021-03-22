@@ -25,6 +25,7 @@ function init() {
     var initialIndex = 0;
     demographic(initialIndex);
     startingPlots(initialIndex);
+    extra(initialIndex);
 
 }
 
@@ -195,57 +196,177 @@ function startingPlots(index){
 
 //startingPlots();
 
+// function bonus() {
+
+//     d3.json("../samples.json").then((data) => {
+//         console.log(data);
+        
+//         var metadata = data.metadata;
+//         console.log(metadata);
+
+//         // test: selecting the first dicitonary
+//         //var idMetadata = metadata[0];
+
+//         //var id = 5;
+//         // Obtaining the dictionary for a selected id
+//         // var idMetadata = metadata["${id}"];
+//         var idMetadata = metadata[index];
+//         // not sure which way will need
+
+//         console.log(idMetadata);
+
+//         var data = [
+//             {
+//             type: "indicator",
+//             mode: "gauge", //"gauge+number+delta"
+//             // value: 420,
+//             title: { text: "Belly Button Washing Frequency <br> Scrubs Per Week", font: { size: 15 } },
+//             //delta: { reference: 400, increasing: { color: "RebeccaPurple" } },
+//             gauge: {
+//                 axis: { range: [null, 9], tickwidth: 1, tickcolor: "darkblue" },
+//                 bar: { color: "darkblue" },
+//                 bgcolor: "white",
+//                 borderwidth: 2,
+//                 bordercolor: "gray",
+//                 steps: [
+//                 { range: [0, 1], color: "cyan" },
+//                 { range: [1, 2], color: "cyan" },
+//                 { range: [2, 3], color: "cyan" },
+//                 { range: [3, 4], color: "cyan" },
+//                 { range: [4, 5], color: "cyan" },
+//                 { range: [5, 6], color: "cyan" },
+//                 { range: [6, 7], color: "cyan" },
+//                 { range: [7, 8], color: "cyan" },
+//                 { range: [8, 9], color: "cyan" }
+//                 ],
+//                 // threshold: {
+//                 //   line: { color: "red", width: 4 },
+//                 //   thickness: 0.75,
+//                 //   value: 490
+//                 // }
+//             }
+//             }
+//         ];
+        
+//         var layout = {
+//             width: 400,
+//             height: 400,  // i think this height and width is setting where it is within the element, not actually the height and width of the chart
+//             margin: { t: 25, r: 25, l: 25, b: 25 },
+//             //paper_bgcolor: "lavender",
+//             font: { color: "black", family: "Arial" },
+//             shapes:[{
+//                 type: 'path',
+//                 path: 02,
+//                 fillcolor: '850000',
+//                 line: {
+//                     color: '850000'
+//                 }
+//                 }]
+//         };
+      
+//         Plotly.newPlot('gauge', data, layout);
+
+//     })
+// };
+
+// bonus()
 
 
-function bonusChallenge() {
-    // will need metadata, wfreq is variable in metadata
+function extra(index){
 
-    var data = [
-        {
-          type: "indicator",
-          mode: "gauge", //"gauge+number+delta"
-          //value: 420,
-          title: { text: "Belly Button Washing Frequency\n Scrubs Per Week", font: { size: 24 } },
-          //delta: { reference: 400, increasing: { color: "RebeccaPurple" } },
-          gauge: {
-            axis: { range: [null, 9], tickwidth: 1, tickcolor: "darkblue" },
-            bar: { color: "darkblue" },
-            bgcolor: "white",
-            borderwidth: 2,
-            bordercolor: "gray",
-            steps: [
-              { range: [0, 1], color: "seashell" },
-              { range: [1, 2], color: "LightGoldenRodYellow" },
-              { range: [2, 3], color: "oldlace" },
-              { range: [3, 4], color: "palegoldenrod" },
-              { range: [4, 5], color: "yellowgreen" },
-              { range: [5, 6], color: "darkseagreen" },
-              { range: [6, 7], color: "mediumseagreen" },
-              { range: [7, 8], color: "seagreen" },
-              { range: [8, 9], color: "green" },
-            ],
-            threshold: {
-              line: { color: "red", width: 4 },
-              thickness: 0.75,
-              value: 490
+    d3.json("../samples.json").then((data) => {
+        console.log(data);
+        
+        var metadata = data.metadata;
+        console.log(metadata);
+
+        // test: selecting the first dicitonary
+        //var idMetadata = metadata[0];
+
+        //var id = 5;
+        // Obtaining the dictionary for a selected id
+        // var idMetadata = metadata["${id}"];
+        var idMetadata = metadata[index];
+        // not sure which way will need
+
+        console.log(idMetadata); 
+
+        var number = parseInt(idMetadata.wfreq)
+
+        console.log(number);         
+
+    
+        // Enter a number between 0 and 9
+        var scaledNumber = number * 20;
+        // will be using trig to calculate the position of the arrow
+        // this needs to be in degrees. So need to have 180 - scaledNumber indicating angle the arrow points to
+        // therefore need to scale the number of washes for it to make sense in terms of the maximum value being 180 not 9
+        // to scale from 9 to 180 need to multiply by 20, therefore will multiply all wash numbers by 20
+
+        // Trig to calc meter point
+        var degrees = 180 - scaledNumber,
+            radius = .5;
+        var radians = degrees * Math.PI / 180;
+        var x = radius * Math.cos(radians);
+        var y = radius * Math.sin(radians);
+
+        // Path: may have to change to create a better triangle
+        var mainPath = 'M -.0 -0.025 L .0 0.025 L ',
+            pathX = String(x),
+            space = ' ',
+            pathY = String(y),
+            pathEnd = ' Z';
+        var path = mainPath.concat(pathX,space,pathY,pathEnd);
+
+        var data = [{ type: 'scatter',
+            x: [0], y:[0],
+            marker: {size: 28, color:'850000'},
+            showlegend: false,
+            name: 'speed',
+            text: scaledNumber,
+            hoverinfo: 'text+name'},
+            { values: [50/9, 50/9, 50/9, 50/9, 50/9, 50/9, 50/9, 50/9, 50/9, 50],
+            rotation: 90,
+            text: ['8-9', '7-8', '6-7', '5-6','4-5', '3-4', '2-3', '1-2', '0-1', ''],
+            textinfo: 'text',
+            textposition:'inside',	  
+            marker: {colors:['rgba(23, 130, 50 .7)', 'rgba(14, 127, 0, .6)',
+                                'rgba(14, 140, 0, .5)', 'rgba(110, 154, 22, .5)',
+                                'rgba(170, 202, 42, .5)', 'rgba(202, 209, 95, .5)',
+                                'rgba(210, 206, 145, .5)', 'rgba(232, 226, 202, .5)', 
+                                'rgba(232, 226, 202, .3)', 'rgba(255, 255, 255, 0)',]},
+            labels: ['8-9', '7-8', '6-7', '5-6','4-5', '3-4', '2-3', '1-2', '0-1', ''],
+            hoverinfo: 'label',
+            hole: .5,
+            type: 'pie',
+            showlegend: false
+        }];
+
+        var layout = {
+        shapes:[{
+            type: 'path',
+            path: path,
+            fillcolor: '850000',
+            line: {
+                color: '850000'
             }
-          }
-        }
-      ];
-      
-      var layout = {
+            }],
+        title: '<b>Belly Button Washing Frequency</b> <br> Scrubs per Week',
+        height: 500,
         width: 500,
-        height: 400,
-        margin: { t: 25, r: 25, l: 25, b: 25 },
-        paper_bgcolor: "lavender",
-        font: { color: "darkblue", family: "Arial" }
-      };
-      
-      Plotly.newPlot('gauge', data, layout);
+        xaxis: {zeroline:false, showticklabels:false,
+                    showgrid: false, range: [-1, 1]},
+        yaxis: {zeroline:false, showticklabels:false,
+                    showgrid: false, range: [-1, 1]}
+        };
 
-}
+        Plotly.newPlot('gauge', data, layout);
+    
+    })
+};
 
-bonusChallenge();
+//extra(number)
+
 //maybe for changing: for index between whatever and whatever. if sampleData[idex].id = selected id then use that data
 
 //UPDATING
@@ -313,6 +434,10 @@ function optionChanged(idSelection) {
                 startingPlots(index);
                 // Updating the demographic panel with the index value based on the selected id
                 demographic(index);
+                // updating gauge chart
+                extra(index);
+
+            
             }
     }
 
