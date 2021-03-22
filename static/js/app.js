@@ -196,6 +196,56 @@ function startingPlots(index){
 //startingPlots();
 
 
+
+function bonusChallenge() {
+    // will need metadata, wfreq is variable in metadata
+
+    var data = [
+        {
+          type: "indicator",
+          mode: "gauge", //"gauge+number+delta"
+          //value: 420,
+          title: { text: "Belly Button Washing Frequency\n Scrubs Per Week", font: { size: 24 } },
+          //delta: { reference: 400, increasing: { color: "RebeccaPurple" } },
+          gauge: {
+            axis: { range: [null, 9], tickwidth: 1, tickcolor: "darkblue" },
+            bar: { color: "darkblue" },
+            bgcolor: "white",
+            borderwidth: 2,
+            bordercolor: "gray",
+            steps: [
+              { range: [0, 1], color: "seashell" },
+              { range: [1, 2], color: "LightGoldenRodYellow" },
+              { range: [2, 3], color: "oldlace" },
+              { range: [3, 4], color: "palegoldenrod" },
+              { range: [4, 5], color: "yellowgreen" },
+              { range: [5, 6], color: "darkseagreen" },
+              { range: [6, 7], color: "mediumseagreen" },
+              { range: [7, 8], color: "seagreen" },
+              { range: [8, 9], color: "green" },
+            ],
+            threshold: {
+              line: { color: "red", width: 4 },
+              thickness: 0.75,
+              value: 490
+            }
+          }
+        }
+      ];
+      
+      var layout = {
+        width: 500,
+        height: 400,
+        margin: { t: 25, r: 25, l: 25, b: 25 },
+        paper_bgcolor: "lavender",
+        font: { color: "darkblue", family: "Arial" }
+      };
+      
+      Plotly.newPlot('gauge', data, layout);
+
+}
+
+bonusChallenge();
 //maybe for changing: for index between whatever and whatever. if sampleData[idex].id = selected id then use that data
 
 //UPDATING
