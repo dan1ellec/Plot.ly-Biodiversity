@@ -244,7 +244,7 @@ function extra(index){
 //UPDATING
 
 // Calling optionChanged function when a change takes place to the DOM
-d3.selectAll("body").on("change", optionChanged(idSelection));
+d3.selectAll("body").on("change", optionChanged());
 
 // This function is called when a dropdown menu item is selected
 function optionChanged(idSelection) {
