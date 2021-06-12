@@ -53,11 +53,10 @@ A bubble chart displays every sample for the selected test subject.
 The gauge chart plots the weekly washing frequency of the selected test subject.
 
 
-### Metadata Panel
+### 4: Metadata Panel
 
 The metadata panel displays the sample metadata, i.e., an individual's demographic information.
 It is presents each key-value pair from the metadata JSON object.
-
 
 
 ## Deployment
@@ -66,6 +65,9 @@ The project is deployed at https://dan1ellec.github.io/biodiversity_dashboard/
 
 
 ## Preview
+
+![Plotly webpage](Image/plotly_preview.png)
+
 
 - - -
 
